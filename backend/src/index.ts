@@ -34,7 +34,7 @@ app.use(
     maxAge: 24 * 60 * 60 * 1000,
     secure: config.NODE_ENV === "production",
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: config.NODE_ENV === "production" ? "none" : "lax",
   })
 );
 
@@ -51,12 +51,19 @@ app.use(
 app.get(
   `/`,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    throw new BadRequestException(
-      "This is a bad request",
-      ErrorCodeEnum.AUTH_INVALID_TOKEN
-    );
     return res.status(HTTPSTATUS.OK).json({
-      message: "Hello Subscribe to the channel & share",
+      message: "Backend is running",
+      status: "ok",
+    });
+  })
+);
+
+app.get(
+  `/health`,
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    return res.status(HTTPSTATUS.OK).json({
+      status: "ok",
+      service: "backend",
     });
   })
 );
